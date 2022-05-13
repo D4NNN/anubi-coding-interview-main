@@ -1,8 +1,12 @@
-import { Controller, Get, Param } from "@nestjs/common"
-import { Paginate, Paginated, PaginateQuery } from "nestjs-paginate"
+import { Body, Controller, Get, Param, Post } from "@nestjs/common"
 import { AppService } from "./app.service"
-import { Transaction } from "./database/transactions.types"
-import { TransactionEntity } from "./entities/transaction.entity"
+import { Asset, Transaction } from "./database/transactions.types"
+
+
+interface interestDTO {
+  user: string;
+  asset: string;
+}
 
 @Controller("v1")
 export class AppController {
@@ -13,8 +17,23 @@ export class AppController {
     return this.appService.getTransactions()
   }
 
+  @Get("transactions/:id")
+  getTransactionsByUser(@Param('id') id: string): Transaction[] {
+    return this.appService.getTransactionsByUser(id)
+  }
+
+  @Get("users")
+  getUsers(): string[] {
+    return this.appService.getUsers()
+  }
+
   @Get("balances/:id")
   getBalanceByUser(@Param('id') id: string): Transaction[] {
     return this.appService.getBalanceByUser(id)
+  }
+
+  @Post("interest")
+  postInterest(@Body() body: interestDTO) {
+    return this.appService.processUserInterests(body.asset,body.user)
   }
 }

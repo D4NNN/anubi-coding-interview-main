@@ -1,9 +1,9 @@
 import { ReactElement } from "react";
-import { Crypto } from "../types/crypto.enum";
+import { Crypto } from "../../types/crypto.enum";
 import {FaEthereum, FaBtc, FaCoins} from 'react-icons/fa'
 
 
-const CryptoIcon = ({asset}:{asset: Crypto}) => {
+const CryptoIcon = ({asset, size}:{asset: Crypto, size?: number}) => {
 
     let icon: ReactElement;
 

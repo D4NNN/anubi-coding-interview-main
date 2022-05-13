@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { Nature } from "../types/nature.enum"
+import { Nature } from "../../types/nature.enum"
 
 import {BsFillArrowDownCircleFill, BsFillArrowUpCircleFill, BsPercent, BsGift} from 'react-icons/bs'
 

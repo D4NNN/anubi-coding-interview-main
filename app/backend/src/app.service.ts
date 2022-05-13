@@ -1,11 +1,6 @@
-import { Injectable, NotImplementedException } from "@nestjs/common"
+import { Injectable } from "@nestjs/common"
 import { TransactionsRepo } from "./database/transactions.repo"
 import { Transaction } from "./database/transactions.types"
-
-import { InjectRepository } from "@nestjs/typeorm"
-import { TransactionEntity } from "./entities/transaction.entity"
-import { FilterOperator, paginate, Paginated, PaginateQuery } from "nestjs-paginate"
-import { Repository } from "typeorm"
 
 
 const INTEREST_RATES_BY_ASSET = {
@@ -16,28 +11,34 @@ const INTEREST_RATES_BY_ASSET = {
 
 @Injectable()
 export class AppService {
-  constructor(/*@InjectRepository(TransactionEntity) private readonly transactionsEntityRepo: Repository<TransactionEntity>,*/
-  private readonly transactionsRepo: TransactionsRepo) {}
+  constructor(private readonly transactionsRepo: TransactionsRepo) {}
 
   getTransactions(): Transaction[] {
     return this.transactionsRepo.getAll()
-    /*
-    return paginate(query, this.transactionsEntityRepo, {
-      sortableColumns: ['id', 'createdOn'],
-      searchableColumns: ['id', 'createdOn', 'asset'],
-      defaultSortBy: [['id', 'DESC']],
-    });*/
+  }
+
+  getTransactionsByUser(id: string): Transaction[] {
+    return this.transactionsRepo.getTransactionsByUser(id);
   }
 
   /**
    * @dev This method is used to get the total balance (sum of amounts)
    *  grouped by user id, and asset
    *
-   * @returns
+   * @returns A list of {asset, balance} per user
    */
   getBalanceByUser(id: string): any {
     // TODO: applicant should implement this method
     return this.transactionsRepo.getBalanceByUser(id)
+  }
+
+  /**
+   * @dev returns a list of users
+   *
+   * @returns returns a list of users
+   */
+  getUsers(): string[] {
+    return this.transactionsRepo.getUsers();
   }
 
   /**
@@ -49,10 +50,10 @@ export class AppService {
    *
    *  After the calculation of the interest due, it should be created a TransactionNature=Interest and the amount calculated by the previous step
    *
-   * @returns
+   * @returns The last transaction's id
    */
-  processUserInterests(): any {
-    // TODO: applicant should implement this method
-    throw new NotImplementedException()
+  processUserInterests(asset: string, idUser: string): any {
+    const rate = INTEREST_RATES_BY_ASSET[asset];
+    return this.transactionsRepo.putInterest(asset, rate, idUser)
   }
 }
